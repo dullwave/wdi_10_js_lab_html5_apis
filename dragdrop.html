@@ -1,23 +1,125 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title></title>
+  <title>Dragsies/Dropsies</title>
+  <style type='text/css'>
+    div .container {
+      display: inline-block;
+    }
+      .todo {
+        float: left;
+      }
+      .done-droptarget {
+        float: right;
+      }
+    div.after-box {
+      clear: both;
+      font-size: 48px;
+    }
+    ul li{
+      list-style-type: none;
+    }
+    .list_item {
+      cursor: move;
+    }
+  </style>
 </head>
 <body>
   <p>Create an item or use one of ours. Try dragging item to the 'done' list, or to the trash.</p>
-    <div id="bin"></div>
-    <h2>To Do:</h2>
-    <ul>
-      <li><a id="one" href="#">Buy a dog</a></li>
-      <li><a href="#" id="two">Buy dog things for dog</a></li>
-      <li><a href="#" id="three">Get iced coffee</a></li>
-      <li><a href="#" id="four">Call dad</a></li>
-      <li><a href="#" id="five">Remember that you bought a dog</a></li>
-      <li><a href="#" id="six">Buy a small rabbit friend for dog</a></li>
-      <li><a href="#" id="seven">Drink a million waters</a></li>
-      <li><a href="#" id="eight">Name dog (ideas: 'dog', 'dog-friend')</a></li>
-      <li><a href="#" id="nine">Drag this thing to the trash</a></li>
-      <li><a href="#" id="ten">Name rabbit (ideas: 'bunsworthy the noble: friend-of-dog')</a></li>
-    </ul>
+    <div class="container">
+      <div class="todo">
+      <h2>To Do:</h2>
+      <ul>
+        <li class='list_item' draggable='true'>Buy a dog</li>
+        <li class='list_item' draggable='true'>Buy dog things for dog</li>
+        <li class='list_item' draggable='true'>Get iced coffee</li>
+        <li class='list_item' draggable='true'>Call dad</li>
+        <li class='list_item' draggable='true'>Remember that you bought a dog</li>
+        <li class='list_item' draggable='true'>Buy a small rabbit friend for dog</li>
+        <li class='list_item' draggable='true'>Drink a million waters</li>
+        <li class='list_item' draggable='true'>Name dog (ideas: 'dog', 'dog-friend')</li>
+        <li class='list_item' draggable='true'>Drag this thing to the trash</li>
+        <li class='list_item' draggable='true'>Name rabbit (ideas: 'bunsworthy the noble: friend-of-dog')</li>
+      </ul>
+      </div>
+      <div class="done_droptarget">
+      <h2>Done:</h2>
+      </div>
+    </div>
+    <div class="after-box">
+      <div class="trash_droptarget">HAHA NEVERMIND DELETE IT</div>
+    </div>
+    <script>
+    var doneZone = document.querySelector('.done_droptarget');
+    var trashZone = document.querySelector('.trash_droptarget');
+
+    var dragElements = document.querySelectorAll('.list_item li');
+
+    var elementDragged = null;
+      for (var i = 0; i < dragElements.length; i++) {
+        dragElements[i].addEventListener('dragstart', function(e) {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text', this.innerHTML);
+          elementDragged = this;
+        });
+
+        dragElements[i].addEventListener('dragend', function(e) {
+          elementDragged = null;
+        });
+      };
+
+      // Event Listener for when the dragged element is over the drop zone.
+      doneZone.addEventListener('dragover', function(e) {
+        if (e.preventDefault) {
+          e.preventDefault();
+        }
+
+        e.dataTransfer.dropEffect = 'move';
+
+        return false;
+      });
+
+      trashZone.addEventListener('dragover', function(e) {
+        if (e.preventDefault) {
+          e.preventDefault();
+        }
+
+        e.dataTransfer.clearData (elementDragged);
+
+        return false;
+      });
+
+      // Event Listener for when the dragged element enters the drop zone.
+      doneZone.addEventListener('dragenter', function(e) {
+        this.className = "over";
+      });
+
+      // Event Listener for when the dragged element leaves the drop zone.
+      doneZone.addEventListener('dragleave', function(e) {
+        this.className = "";
+      });
+      // Event Listener for when the dragged element dropped in the drop zone.
+      doneZone.addEventListener('drop', function(e) {
+        if (e.preventDefault) e.preventDefault();
+        if (e.stopPropagation) e.stopPropagation();
+
+        this.className = "";
+        this.innerHTML = "Dropped " + e.dataTransfer.getData('text');
+
+        // Remove the element from the list.
+        document.querySelector('#drag-elements').removeChild(elementDragged);
+
+        return false;
+      });
+
+      trashZone.addEventListener('dragenter', function(e) {
+        this.className = "over";
+      });
+
+      // Event Listener for when the dragged element leaves the drop zone.
+      trashZone.addEventListener('dragleave', function(e) {
+        this.className = "";
+      });
+    </script>
 </body>
 </html>
